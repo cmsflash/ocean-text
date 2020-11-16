@@ -8,10 +8,6 @@ from torchvision import models
 from utils import init_embedding_, compute_wordsim_rho
 
 
-# def render(char):
-    # return torch.rand([char.size(0), 3, 256, 256]).cuda()
-
-
 class SkipGramModel(nn.Module):
 
     def __init__(self, vocabulary_size, dimension):
@@ -67,7 +63,6 @@ class NanoNet(nn.Module):
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.conv3(x)
-        # original: x = f.adaptive_avg_pool2d([1, 1]).squeeze()
         x = f.adaptive_avg_pool2d(x, output_size=1).squeeze()
         x = self.fc(x)
         return x
@@ -89,7 +84,6 @@ class GlyphNet(nn.Module):
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
-        # original: x = f.adaptive_avg_pool2d([1, 1]).squeeze()
         x = f.adaptive_avg_pool2d(x, output_size=1).squeeze()
         x = self.fc(x)
         return x
@@ -157,7 +151,6 @@ class VisualModel(nn.Module):
 
         if torch.isnan(loss):
             pass
-            #import pdb; pdb.set_trace()
         return loss
 
     def get_wordsim_rho(self, wordsim_tuples, id_from_word, word_from_id):
@@ -176,4 +169,3 @@ class VisualModel(nn.Module):
             embedding[id_from_word[word]] = word_embedding
         embedding = torch.tensor(embedding)
         return embedding
-

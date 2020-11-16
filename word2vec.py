@@ -1,19 +1,17 @@
+import argparse
 import math
 import os
-from os import path as osp
+import shutil
+import sys
+
+import numpy as np
+from PIL import ImageFont
+import torch
+from torch import nn, optim
+from tqdm import tqdm
+
 from input_data import InputData
 from model import SkipGramModel, VisualModel
-from torch.autograd import Variable
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from tqdm import tqdm
-import sys
-import argparse
-from PIL import ImageFont
-import numpy as np
-import shutil
-
 from utils import dump_embedding
 
 
@@ -108,14 +106,15 @@ class Word2Vec:
                 print(f'Loss: {loss.item()}, lr: {self.optimizer.param_groups[0]["lr"]}, rho: {rho}')
                 dump_embedding(
                     self.model.module.get_embedding(self.data.id_from_word, self.data.word_from_id), self.model.module.dimension,
-                    self.data.word_from_id, osp.join(self.output_dir, f'latest.txt')
+                    self.data.word_from_id, os.path.join(self.output_dir, f'latest.txt')
                 )
                 if rho > best_rho:
                     dump_embedding(
                         self.model.module.get_embedding(self.data.id_from_word, self.data.word_from_id), self.model.module.dimension,
-                        self.data.word_from_id, osp.join(self.output_dir, f'{i}_{rho}.txt')
+                        self.data.word_from_id, os.path.join(self.output_dir, f'{i}_{rho}.txt')
                     )
                     best_rho = rho
+
             # warm up
             if i < 10000:
                 lr = self.initial_lr * i / 10000
@@ -133,7 +132,6 @@ if __name__ == '__main__':
     parser.add_argument('--output_dir', default='output_embedding')
     parser.add_argument('--wordsim_file', default='chinese-297-char.txt')
     parser.add_argument('--font_file', default='fonts/NotoSansCJKsc-Regular.otf')
-    #parser.add_argument('--font_file', default='fonts/Adobe Heiti Std.otf')
     parser.add_argument('--font_size', default=24)
     args = parser.parse_args()
 
@@ -149,4 +147,3 @@ if __name__ == '__main__':
     )
 
     w2v.train()
-

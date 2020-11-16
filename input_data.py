@@ -1,10 +1,13 @@
-import numpy
 from collections import deque, defaultdict
+
+import numpy as np
 from tqdm import tqdm
 
 
 SAMPLE_TABLE_SIZE = int(1e8)
-numpy.random.seed(12345)
+
+
+np.random.seed(12345)
 
 
 class InputData:
@@ -45,13 +48,13 @@ class InputData:
 
     def _create_sample_table(self):
         sample_table = []
-        pow_frequencies = numpy.array(list(self.frequencies.values())) ** 0.75
+        pow_frequencies = np.array(list(self.frequencies.values())) ** 0.75
         words_pow = sum(pow_frequencies)
         ratios = pow_frequencies / words_pow
-        count = numpy.round(ratios * SAMPLE_TABLE_SIZE)
+        count = np.round(ratios * SAMPLE_TABLE_SIZE)
         for id_, c in enumerate(count):
             sample_table += [id_] * int(c)
-        sample_table = numpy.array(sample_table)
+        sample_table = np.array(sample_table)
         return sample_table
 
     def get_batch_pairs(self, batch_size, window_size):
@@ -81,7 +84,7 @@ class InputData:
         return batch_pairs
 
     def get_neg_v_neg_sampling(self, pos_word_pair, count):
-        neg_v = numpy.random.choice(
+        neg_v = np.random.choice(
             self.sample_table, size=(len(pos_word_pair), count)
         ).tolist()
         return neg_v
